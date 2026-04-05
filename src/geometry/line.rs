@@ -1,4 +1,4 @@
-use super::point::Point;
+use super::Point;
 
 #[derive(Debug, Clone)]
 pub struct Line {

@@ -12,11 +12,11 @@ pub fn generate_gcode(shapes: &[Shape]) -> String {
                 output.push_str(&format!(
                     "G0 X{} Y{}\n",
                     line.start.x, line.start.y
-                });
+                ));
                 output.push_str(&format!(
                     "G0 X{} Y{}\n",
                     line.end.x, line.end.y
-                });
+                ));
             }
         }
     }
