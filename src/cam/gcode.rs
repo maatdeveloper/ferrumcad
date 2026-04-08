@@ -1,4 +1,4 @@
-use crate::cad::model::Shape;
+use crate::cad::shape::Shape;
 
 pub fn generate_gcode(shapes: &[Shape]) -> String {
     let mut output = String::new();
@@ -17,7 +17,8 @@ pub fn generate_gcode(shapes: &[Shape]) -> String {
                     "G0 X{} Y{}\n",
                     line.end.x, line.end.y
                 ));
-            }
+            },
+            Shape::Circle(_) => todo!(),
         }
     }
 

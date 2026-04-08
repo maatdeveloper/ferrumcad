@@ -1,10 +1,5 @@
-use crate::geometry::{Line, Point};
-
-#[derive(Debug, Clone)]
-pub enum Shape {
-    Line(Line),
-}
-
+use crate::geometry::{Point, Line};
+use super::Shape;
 
 #[derive(Debug)]
 pub struct Model {

@@ -1,5 +1,4 @@
-use super::Point;
-use super::BoundingBox;
+use super::{Point, BoundingBox, Geometry};
 
 #[derive(Debug, Clone)]
 pub struct Circle {
@@ -12,19 +11,18 @@ impl Circle {
     pub fn area(&self) -> f64 {
         std::f64::consts::PI * self.radius.powi(2)
     }
+}
 
-    pub fn bounding_box(&self) -> BoundingBox {
-        // largura e altura sao 2r
-        let circle_box = self.radius * 2.0;
-
+impl Geometry for Circle {
+    fn bounding_box(&self) -> BoundingBox {
         BoundingBox {
             min: Point {
-                x: 0.0,
-                y: 0.0,
+                x: self.center.x - self.radius,
+                y: self.center.y - self.radius,
             },
             max: Point {
-                x: circle_box,
-                y: circle_box,
+                x: self.center.x + self.radius,
+                y: self.center.y + self.radius,
             },
         }
     }

@@ -1,5 +1,5 @@
-use ferrumcad::cad::model::Model;
 use ferrumcad::geometry::Point;
+use ferrumcad::cad::Model;
 use ferrumcad::cam::gcode::generate_gcode;
 
 fn main() {

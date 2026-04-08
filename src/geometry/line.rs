@@ -1,5 +1,5 @@
-use super::Point;
-use super::BoundingBox;
+use super::{Point, BoundingBox, Geometry};
+
 
 #[derive(Debug, Clone)]
 pub struct Line {
@@ -31,22 +31,18 @@ impl Line {
             },
         }
     }
+}
 
-    pub fn bounding_box(&self) -> BoundingBox {
-        // canto inferior esquerdo
-        let inf_esq = (self.start.x) * (self.start.y);
-
-        // canto superior direito
-        let sup_dir = (self.end.x) * (self.end.y);
-
+impl Geometry for Line {
+    fn bounding_box(&self) -> BoundingBox {
         BoundingBox {
             min: Point {
-                x: inf_esq,
-                y: inf_esq,
+                x: self.start.x.min(self.end.x),
+                y: self.start.y.min(self.end.y),
             },
             max: Point {
-                x: sup_dir,
-                y: sup_dir,
+                x: self.start.x.max(self.end.x),
+                y: self.start.y.max(self.end.y),
             },
         }
     }
