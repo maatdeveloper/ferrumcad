@@ -1,5 +1,5 @@
-use super::{Point, BoundingBox, Geometry};
-
+use super::{Point, BoundingBox, Geometry, Intersection};
+use super::utils::{EPS, approx_zero};
 
 #[derive(Debug, Clone)]
 pub struct Line {
@@ -8,7 +8,7 @@ pub struct Line {
 }
 
 impl Line {
-    pub fn lenght(&self) -> f64 {
+    pub fn length(&self) -> f64 {
         self.start.distance(&self.end)
     }
 
@@ -31,6 +31,63 @@ impl Line {
             },
         }
     }
+
+    pub fn intersects(&self, other: &Line) -> bool {
+        let p1 = self.start;
+        let q1 = self.end;
+        let p2 = other.start;
+        let q2 = other.end;
+
+        let o1 = orientation(p1, q1, p2);
+        let o2 = orientation(p1, q1, q2);
+        let o3 = orientation(p2, q2, p1);
+        let o4 = orientation(p2, q2, q1);
+
+        if o1 != o2 && o3 != o4 {
+            return true;
+        }
+
+        if o1 == 0 && on_segment(p1, p2, q1) { return true; }
+        if o2 == 0 && on_segment(p1, q2, q1) { return true; }
+        if o3 == 0 && on_segment(p2, p1, q2) { return true; }
+        if o4 == 0 && on_segment(p2, q1, q2) { return true; }
+
+        false
+    }
+
+    pub fn intersection(&self, other: &Line) -> Intersection {
+        let x1 = self.start.x;
+        let y1 = self.start.y;
+        let x2 = self.end.x;
+        let y2 = self.end.y;
+
+        let x3 = other.start.x;
+        let y3 = other.start.y;
+        let x4 = other.end.x;
+        let y4 = other.end.y;
+
+        let denom = (x1 - x2) * (y3 - y4)
+                  - (y1 - y2) * (x3 - x4);
+
+        if approx_zero(denom) {
+            if colinear(self.start, self.end, other.start) {
+                return overlap(self, other);
+            }
+
+            return Intersection::None;
+        }
+
+        let px = ((x1*y2 - y1*x2) * (x3 - x4) - (x1 - x2) * (x3*y4 - y3*x4)) / denom;
+        let py = ((x1*y2 - y1*x2) * (y3 - y4) - (y1 - y2) * (x3*y4 - y3*x4)) / denom;
+        
+        let p = Point { x: px, y: py};
+
+        if on_segment(self.start, p, self.end) && on_segment(other.start, p, other.end) {
+            return Intersection::Point(p);
+        }
+
+        Intersection::None
+    }
 }
 
 impl Geometry for Line {
@@ -46,4 +103,46 @@ impl Geometry for Line {
             },
         }
     }
+}
+
+fn orientation(p: Point, q: Point, r: Point) -> i32 {
+    let val = (q.y - p.y) * (r.x - q.x)
+            - (q.x - p.x) * (r.y - q.y);
+
+    if val.abs() < EPS {
+        0   // colinear
+    } else if val > 0.0 {
+        1   // horario
+    } else {
+        2   // anti-horario
+    }
+}
+
+fn on_segment(p: Point, q: Point, r: Point) -> bool {
+    q.x <= p.x.max(r.x) + EPS &&
+    q.x >= p.x.min(r.x) - EPS &&
+    q.y <= p.y.max(r.y) + EPS &&
+    q.y >= p.y.min(r.y) - EPS
+}
+
+fn colinear(p: Point, q: Point, r: Point) -> bool {
+    let val = (q.y - p.y) * (r.x - q.x)
+            - (q.x - p.x) * (r.y - q.y);
+
+    val.abs() < EPS
+}
+
+fn overlap(l1: &Line, l2: &Line) -> Intersection {
+    let mut pts = vec![l1.start, l1.end, l2.start, l2.end];
+
+    pts.sort_by(|a, b| a.x.partial_cmp(&b.x).unwrap());
+
+    let start = pts[1];
+    let end = pts[2];
+
+    if start.distance(&end) < EPS {
+        return Intersection::Point(start);
+    }
+
+    Intersection::Overlap(Line { start, end })
 }
