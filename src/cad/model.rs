@@ -1,4 +1,4 @@
-use crate::geometry::{Point, Line};
+use crate::geometry::primitives::{Point, Line};
 use super::Shape;
 
 #[derive(Debug)]

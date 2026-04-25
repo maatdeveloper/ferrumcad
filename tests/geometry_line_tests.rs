@@ -1,4 +1,4 @@
-use ferrumcad::geometry::{Line, Point, Geometry, Intersection};
+use ferrumcad::geometry::{Line, Point, Geometry, Transform};
 
 #[test]
 fn test_line_length() {
@@ -36,6 +36,19 @@ fn test_line_bounding_box() {
     assert_eq!(bb.min.y, 1.0);
     assert_eq!(bb.max.x, 5.0);
     assert_eq!(bb.max.y, 8.0);
+}
+
+#[test]
+fn test_line_translate() {
+    let line = Line {
+        start: Point { x: 0.0, y: 0.0 },
+        end:   Point { x: 1.0, y: 1.0 },
+    };
+
+    let moved = line.translate(2.0, 3.0);
+
+    assert_eq!(moved.start.x, 2.0);
+    assert_eq!(moved.start.y, 3.0);
 }
 
 #[test]

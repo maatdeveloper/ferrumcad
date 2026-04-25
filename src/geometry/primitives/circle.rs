@@ -1,4 +1,6 @@
-use super::{Point, BoundingBox, Geometry};
+use crate::geometry::traits::{Geometry, Transform};
+use crate::geometry::bounding::{BoundingBox};
+use super::{Point};
 
 #[derive(Debug, Clone)]
 pub struct Circle {
@@ -24,6 +26,24 @@ impl Geometry for Circle {
                 x: self.center.x + self.radius,
                 y: self.center.y + self.radius,
             },
+        }
+    }
+}
+
+impl Transform for Circle {
+    fn translate(&self, dx: f64, dy: f64) -> Self {
+        Circle {
+            center: self.center.translate(dx, dy),
+            radius: self.radius,
+            diameter: self.diameter,
+        }
+    }
+
+    fn scale(&self, factor: f64) -> Self {
+        Circle {
+            center:   self.center.scale(factor),
+            radius:   self.radius * factor,
+            diameter: self.diameter * factor,
         }
     }
 }

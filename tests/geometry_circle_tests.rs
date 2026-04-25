@@ -1,4 +1,4 @@
-use ferrumcad::geometry::{Point, Circle, Geometry};
+use ferrumcad::geometry::{Point, Circle, Geometry, Transform};
 
 #[test]
 fn test_circle_bounding_box() {
@@ -14,4 +14,17 @@ fn test_circle_bounding_box() {
     assert_eq!(bb.min.y, 3.0);
     assert_eq!(bb.max.x, 7.0);
     assert_eq!(bb.max.y, 7.0);
+}
+
+#[test]
+fn test_circle_scale() {
+    let circle = Circle {
+        center: Point { x: 1.0, y: 1.0 },
+        radius: 2.0,
+        diameter: 4.0,
+    };
+
+    let scaled = circle.scale(2.0);
+
+    assert_eq!(scaled.diameter, 8.0);
 }

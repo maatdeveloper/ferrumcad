@@ -1,15 +1,8 @@
-pub mod point;
-pub mod line;
-pub mod circle;
-pub mod boundingbox;
-pub mod geometry;
-pub mod intersection;
+pub mod primitives;
+pub mod traits;
+pub mod bounding;
 pub mod utils;
 
-pub use point::Point;
-pub use line::Line;
-pub use circle::Circle;
-pub use boundingbox::BoundingBox;
-pub use geometry::Geometry;
-pub use intersection::Intersection;
-pub use utils::{EPS, approx_zero, approx_eq};
+pub use primitives::{Point, Line, Circle, Intersection};
+pub use traits::{Geometry, Transform};
+pub use bounding::{BoundingBox};

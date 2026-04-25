@@ -1,10 +1,19 @@
-use super::{Point, BoundingBox, Geometry, Intersection};
-use super::utils::{EPS, approx_zero};
+use crate::geometry::traits::{Geometry, Transform};
+use crate::geometry::bounding::{BoundingBox};
+use crate::geometry::utils::{EPS, approx_zero};
+use super::{Point};
 
 #[derive(Debug, Clone)]
 pub struct Line {
     pub start: Point,
     pub end: Point,
+}
+
+#[derive(Debug, Clone)]
+pub enum Intersection {
+    None,
+    Point(Point),
+    Overlap(Line),
 }
 
 impl Line {
@@ -16,19 +25,6 @@ impl Line {
         Point {
             x: (self.start.x + self.end.x) / 2.0,
             y: (self.start.y + self.end.y) / 2.0,
-        }
-    }
-
-    pub fn translate(&self, dx: f64, dy: f64) -> Line {
-        Line {
-            start: Point {
-                x: (self.start.x + dx),
-                y: (self.start.y + dy),
-            },
-            end: Point {
-                x: (self.end.x + dx),
-                y: (self.end.y + dy),
-            },
         }
     }
 
@@ -105,6 +101,22 @@ impl Geometry for Line {
     }
 }
 
+impl Transform for Line {
+    fn translate(&self, dx: f64, dy: f64) -> Self {
+        Line {
+            start: self.start.translate(dx, dy),
+            end:   self.end.translate(dx, dy),
+        }
+    }
+
+    fn scale(&self, factor: f64) -> Self {
+        Line {
+            start: self.start.scale(factor),
+            end:   self.end.scale(factor),
+        }
+    }
+}
+
 fn orientation(p: Point, q: Point, r: Point) -> i32 {
     let val = (q.y - p.y) * (r.x - q.x)
             - (q.x - p.x) * (r.y - q.y);
@@ -129,13 +141,15 @@ fn colinear(p: Point, q: Point, r: Point) -> bool {
     let val = (q.y - p.y) * (r.x - q.x)
             - (q.x - p.x) * (r.y - q.y);
 
-    val.abs() < EPS
+    approx_zero(val)
 }
 
 fn overlap(l1: &Line, l2: &Line) -> Intersection {
     let mut pts = vec![l1.start, l1.end, l2.start, l2.end];
 
-    pts.sort_by(|a, b| a.x.partial_cmp(&b.x).unwrap());
+    pts.sort_by(|a, b| {
+        a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal)
+    });
 
     let start = pts[1];
     let end = pts[2];

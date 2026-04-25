@@ -1,4 +1,4 @@
-use super::Point;
+use crate::geometry::primitives::Point;
 
 #[derive(Debug, Clone)]
 pub struct BoundingBox {

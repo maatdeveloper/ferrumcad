@@ -1,4 +1,4 @@
-use crate::cad::shape::Shape;
+use crate::cad::Shape;
 
 pub fn generate_gcode(shapes: &[Shape]) -> String {
     let mut output = String::new();

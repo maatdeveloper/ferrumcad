@@ -1,4 +1,4 @@
-use ferrumcad::geometry::Point;
+use ferrumcad::geometry::{Point, Transform};
 
 #[test]
 fn test_point_distance() {

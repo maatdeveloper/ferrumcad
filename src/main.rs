@@ -1,6 +1,6 @@
 use ferrumcad::geometry::Point;
 use ferrumcad::cad::Model;
-use ferrumcad::cam::gcode::generate_gcode;
+use ferrumcad::cam::generate_gcode;
 
 fn main() {
     let mut model = Model::new();

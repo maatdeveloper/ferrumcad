@@ -10,7 +10,7 @@ CAD/CAM software written in Rust.
 
 ## Roadmap
 
-- [ ] Geometry core
+- [x] Geometry core
 - [ ] CLI interface
 - [ ] GUI (egui)
 - [ ] CAM engine
