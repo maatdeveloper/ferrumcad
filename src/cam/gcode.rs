@@ -1,3 +1,8 @@
+/* standard library */
+
+/* external crates */
+
+/* ferrumcad crates */
 use crate::cad::Shape;
 
 pub fn generate_gcode(shapes: &[Shape]) -> String {
@@ -9,15 +14,9 @@ pub fn generate_gcode(shapes: &[Shape]) -> String {
     for shape in shapes {
         match shape {
             Shape::Line(line) => {
-                output.push_str(&format!(
-                    "G0 X{} Y{}\n",
-                    line.start.x, line.start.y
-                ));
-                output.push_str(&format!(
-                    "G0 X{} Y{}\n",
-                    line.end.x, line.end.y
-                ));
-            },
+                output.push_str(&format!("G0 X{} Y{}\n", line.start.x, line.start.y));
+                output.push_str(&format!("G0 X{} Y{}\n", line.end.x, line.end.y));
+            }
             Shape::Circle(_) => todo!(),
         }
     }

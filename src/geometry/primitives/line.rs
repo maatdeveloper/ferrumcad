@@ -1,9 +1,15 @@
-use crate::geometry::traits::{Geometry, Transform};
-use crate::geometry::bounding::{BoundingBox};
-use crate::geometry::utils::{EPS, approx_zero};
-use super::{Point};
+/* standard library */
 
-#[derive(Debug, Clone)]
+/* external crates */
+use serde::{Serialize, Deserialize};
+
+/* ferrumcad crates */
+use super::Point;
+use crate::geometry::bounding::BoundingBox;
+use crate::geometry::traits::{Geometry, Transform};
+use crate::geometry::utils::{EPS, approx_eq, approx_zero};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Line {
     pub start: Point,
     pub end: Point,
@@ -43,10 +49,18 @@ impl Line {
             return true;
         }
 
-        if o1 == 0 && on_segment(p1, p2, q1) { return true; }
-        if o2 == 0 && on_segment(p1, q2, q1) { return true; }
-        if o3 == 0 && on_segment(p2, p1, q2) { return true; }
-        if o4 == 0 && on_segment(p2, q1, q2) { return true; }
+        if o1 == 0 && on_segment(p1, p2, q1) {
+            return true;
+        }
+        if o2 == 0 && on_segment(p1, q2, q1) {
+            return true;
+        }
+        if o3 == 0 && on_segment(p2, p1, q2) {
+            return true;
+        }
+        if o4 == 0 && on_segment(p2, q1, q2) {
+            return true;
+        }
 
         false
     }
@@ -62,8 +76,7 @@ impl Line {
         let x4 = other.end.x;
         let y4 = other.end.y;
 
-        let denom = (x1 - x2) * (y3 - y4)
-                  - (y1 - y2) * (x3 - x4);
+        let denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
 
         if approx_zero(denom) {
             if colinear(self.start, self.end, other.start) {
@@ -73,10 +86,10 @@ impl Line {
             return Intersection::None;
         }
 
-        let px = ((x1*y2 - y1*x2) * (x3 - x4) - (x1 - x2) * (x3*y4 - y3*x4)) / denom;
-        let py = ((x1*y2 - y1*x2) * (y3 - y4) - (y1 - y2) * (x3*y4 - y3*x4)) / denom;
-        
-        let p = Point { x: px, y: py};
+        let px = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / denom;
+        let py = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / denom;
+
+        let p = Point { x: px, y: py };
 
         if on_segment(self.start, p, self.end) && on_segment(other.start, p, other.end) {
             return Intersection::Point(p);
@@ -105,58 +118,72 @@ impl Transform for Line {
     fn translate(&self, dx: f64, dy: f64) -> Self {
         Line {
             start: self.start.translate(dx, dy),
-            end:   self.end.translate(dx, dy),
+            end: self.end.translate(dx, dy),
         }
     }
 
     fn scale(&self, factor: f64) -> Self {
         Line {
             start: self.start.scale(factor),
-            end:   self.end.scale(factor),
+            end: self.end.scale(factor),
         }
     }
 }
 
 fn orientation(p: Point, q: Point, r: Point) -> i32 {
-    let val = (q.y - p.y) * (r.x - q.x)
-            - (q.x - p.x) * (r.y - q.y);
+    let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
     if val.abs() < EPS {
-        0   // colinear
+        0 // colinear
     } else if val > 0.0 {
-        1   // horario
+        1 // horario
     } else {
-        2   // anti-horario
+        2 // anti-horario
     }
 }
 
 fn on_segment(p: Point, q: Point, r: Point) -> bool {
-    q.x <= p.x.max(r.x) + EPS &&
-    q.x >= p.x.min(r.x) - EPS &&
-    q.y <= p.y.max(r.y) + EPS &&
-    q.y >= p.y.min(r.y) - EPS
+    q.x <= p.x.max(r.x) + EPS
+        && q.x >= p.x.min(r.x) - EPS
+        && q.y <= p.y.max(r.y) + EPS
+        && q.y >= p.y.min(r.y) - EPS
 }
 
 fn colinear(p: Point, q: Point, r: Point) -> bool {
-    let val = (q.y - p.y) * (r.x - q.x)
-            - (q.x - p.x) * (r.y - q.y);
+    let val = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
     approx_zero(val)
 }
 
 fn overlap(l1: &Line, l2: &Line) -> Intersection {
-    let mut pts = vec![l1.start, l1.end, l2.start, l2.end];
+    let l1_min = l1.start.x.min(l1.end.x);
+    let l1_max = l1.start.x.max(l1.end.x);
 
-    pts.sort_by(|a, b| {
-        a.x.partial_cmp(&b.x).unwrap_or(std::cmp::Ordering::Equal)
-    });
+    let l2_min = l2.start.x.min(l2.end.x);
+    let l2_max = l2.start.x.max(l2.end.x);
 
-    let start = pts[1];
-    let end = pts[2];
+    let overlap_start = l1_min.max(l2_min);
+    let overlap_end = l1_max.min(l2_max);
 
-    if start.distance(&end) < EPS {
-        return Intersection::Point(start);
+    if overlap_start > overlap_end + EPS {
+        return Intersection::None;
     }
 
-    Intersection::Overlap(Line { start, end })
+    if approx_eq(overlap_start, overlap_end) {
+        return Intersection::Point(Point {
+            x: overlap_start,
+            y: l1.start.y,
+        });
+    }
+
+    Intersection::Overlap(Line {
+        start: Point {
+            x: overlap_start,
+            y: l1.start.y,
+        },
+        end: Point {
+            x: overlap_end,
+            y: l1.start.y,
+        },
+    })
 }

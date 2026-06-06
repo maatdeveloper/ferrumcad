@@ -1,8 +1,8 @@
-pub mod point;
-pub mod line;
 pub mod circle;
+pub mod line;
+pub mod point;
 
-pub use point::Point;
-pub use line::Line; 
-pub use line::Intersection;
 pub use circle::Circle;
+pub use line::Intersection;
+pub use line::Line;
+pub use point::Point;

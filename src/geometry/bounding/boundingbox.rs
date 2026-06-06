@@ -1,3 +1,8 @@
+/* standard library */
+
+/* external crates */
+
+/* ferrumcad crates */
 use crate::geometry::primitives::Point;
 
 #[derive(Debug, Clone)]

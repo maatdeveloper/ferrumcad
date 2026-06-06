@@ -1,8 +1,14 @@
-use crate::geometry::traits::{Geometry, Transform};
-use crate::geometry::bounding::{BoundingBox};
-use super::{Point};
+/* standard library */
 
-#[derive(Debug, Clone)]
+/* external crates */
+use serde::{Serialize, Deserialize};
+
+/* ferrumcad crates */
+use super::Point;
+use crate::geometry::bounding::BoundingBox;
+use crate::geometry::traits::{Geometry, Transform};
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Circle {
     pub center: Point,
     pub radius: f64,
@@ -41,8 +47,8 @@ impl Transform for Circle {
 
     fn scale(&self, factor: f64) -> Self {
         Circle {
-            center:   self.center.scale(factor),
-            radius:   self.radius * factor,
+            center: self.center.scale(factor),
+            radius: self.radius * factor,
             diameter: self.diameter * factor,
         }
     }

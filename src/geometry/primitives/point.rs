@@ -1,9 +1,15 @@
-use crate::geometry::traits::{Transform};
+/* standard library */
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+/* external crates */
+use serde::{Serialize, Deserialize};
+
+/* ferrumcad crates */
+use crate::geometry::traits::Transform;
+
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub struct Point {
     pub x: f64,
-    pub y: f64
+    pub y: f64,
 }
 
 impl Point {

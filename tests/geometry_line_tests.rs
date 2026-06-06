@@ -1,10 +1,15 @@
-use ferrumcad::geometry::{Line, Point, Geometry, Transform};
+/* standard library */
+
+/* external crates */
+
+/* ferrumcad crates */
+use ferrumcad::geometry::{Geometry, Intersection, Line, Point, Transform};
 
 #[test]
 fn test_line_length() {
     let line = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 3.0, y: 4.0 },
+        end: Point { x: 3.0, y: 4.0 },
     };
 
     assert_eq!(line.length(), 5.0);
@@ -14,7 +19,7 @@ fn test_line_length() {
 fn test_line_midpoint() {
     let line = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 10.0, y: 10.0 },
+        end: Point { x: 10.0, y: 10.0 },
     };
 
     let mid = line.midpoint();
@@ -27,7 +32,7 @@ fn test_line_midpoint() {
 fn test_line_bounding_box() {
     let line = Line {
         start: Point { x: 5.0, y: 1.0 },
-        end:   Point { x: 2.0, y: 8.0 },
+        end: Point { x: 2.0, y: 8.0 },
     };
 
     let bb = line.bounding_box();
@@ -42,7 +47,7 @@ fn test_line_bounding_box() {
 fn test_line_translate() {
     let line = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 1.0, y: 1.0 },
+        end: Point { x: 1.0, y: 1.0 },
     };
 
     let moved = line.translate(2.0, 3.0);
@@ -55,12 +60,12 @@ fn test_line_translate() {
 fn test_segments_intersect() {
     let l1 = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 10.0, y: 10.0 },
+        end: Point { x: 10.0, y: 10.0 },
     };
 
     let l2 = Line {
         start: Point { x: 0.0, y: 10.0 },
-        end:   Point { x: 10.0, y: 0.0 },
+        end: Point { x: 10.0, y: 0.0 },
     };
 
     assert!(l1.intersects(&l2));
@@ -70,11 +75,11 @@ fn test_segments_intersect() {
 fn test_segments_do_not_intersect() {
     let l1 = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 5.0, y: 0.0 },
+        end: Point { x: 5.0, y: 0.0 },
     };
     let l2 = Line {
         start: Point { x: 0.0, y: 1.0 },
-        end:   Point { x: 5.0, y: 1.0 },
+        end: Point { x: 5.0, y: 1.0 },
     };
 
     assert!(!l1.intersects(&l2));
@@ -84,11 +89,11 @@ fn test_segments_do_not_intersect() {
 fn test_colinear_intersection() {
     let l1 = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 10.0, y: 0.0 },
+        end: Point { x: 10.0, y: 0.0 },
     };
     let l2 = Line {
-        start: Point { x: 5.0, y: 0.0},
-        end:   Point { x: 15.0, y: 0.0},
+        start: Point { x: 5.0, y: 0.0 },
+        end: Point { x: 15.0, y: 0.0 },
     };
 
     assert!(l1.intersects(&l2));
@@ -98,11 +103,11 @@ fn test_colinear_intersection() {
 fn test_touching_segments() {
     let l1 = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 5.0, y: 5.0 },
+        end: Point { x: 5.0, y: 5.0 },
     };
     let l2 = Line {
         start: Point { x: 5.0, y: 5.0 },
-        end:   Point { x: 10.0, y: 0.0 },
+        end: Point { x: 10.0, y: 0.0 },
     };
 
     assert!(l1.intersects(&l2));
@@ -112,11 +117,11 @@ fn test_touching_segments() {
 fn test_overlap() {
     let l1 = Line {
         start: Point { x: 0.0, y: 0.0 },
-        end:   Point { x: 10.0, y: 0.0 },
+        end: Point { x: 10.0, y: 0.0 },
     };
     let l2 = Line {
         start: Point { x: 5.0, y: 0.0 },
-        end:   Point { x: 15.0, y: 0.0 },
+        end: Point { x: 15.0, y: 0.0 },
     };
 
     match l1.intersection(&l2) {

@@ -1,4 +1,9 @@
-use ferrumcad::geometry::{Point, Circle, Geometry, Transform};
+/* standard library */
+
+/* external crates */
+
+/* ferrumcad crates */
+use ferrumcad::geometry::{Circle, Geometry, Point, Transform};
 
 #[test]
 fn test_circle_bounding_box() {

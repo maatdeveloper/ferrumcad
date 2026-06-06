@@ -1,3 +1,8 @@
+/* standard library */
+
+/* external crates */
+
+/* ferrumcad crates */
 use ferrumcad::geometry::{Point, Transform};
 
 #[test]
